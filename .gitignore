@@ -1,0 +1,5 @@
+.idea
+**/target
+
+# credentials file
+/hospital-assistant-controller/src/main/resources/fcmtestapp-bbc49-firebase-adminsdk-pg9xa-53441cbc46.json
