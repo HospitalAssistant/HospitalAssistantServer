@@ -123,23 +123,33 @@ FROM roles
 JOIN users
 WHERE roles.name = 'ROLE_PATIENT' AND users.email = 'patient1@abv.bg';
 
+--GOOGLE HOME MINI
+INSERT INTO users(email, password)
+VALUES('google_home_mini@abv.bg', '$2a$10$7OKMxAS1wn/9o4Q86hXSbuHTJI2cMHNoBoTvpomacKmXxM47Iru3e');
+
+INSERT INTO user_roles(user_id, role_id)
+SELECT users.id, roles.id
+FROM roles
+JOIN users
+WHERE roles.name = 'ROLE_ADMIN' AND users.email = 'google_home_mini@abv.bg';
+
 --WORK SCHEDULE
 INSERT INTO schedules(start, end, user_id)
-SELECT "2019-11-13T10:15:30", "2019-12-13T10:15:30", id
+SELECT "2019-12-13T10:15:30", "2020-03-13T10:15:30", id
 FROM users
 WHERE users.email = 'nurse1@abv.bg';
 
 INSERT INTO schedules(start, end, user_id)
-SELECT "2019-11-13T10:15:30", "2019-12-13T10:15:30", id
+SELECT "2019-12-13T10:15:30", "2020-03-13T10:15:30", id
 FROM users
 WHERE users.email = 'nurse2@abv.bg';
 
 INSERT INTO schedules(start, end, user_id)
-SELECT "2019-11-13T10:15:30", "2019-12-13T10:15:30", id
+SELECT "2019-12-13T10:15:30", "2020-03-13T10:15:30", id
 FROM users
 WHERE users.email = 'nurse3@abv.bg';
 
 INSERT INTO schedules(start, end, user_id)
-SELECT "2019-11-13T10:15:30", "2019-12-13T10:15:30", id
+SELECT "2019-12-13T10:15:30", "2020-03-13T10:15:30", id
 FROM users
 WHERE users.email = 'sanitary1@abv.bg';

@@ -70,18 +70,28 @@ public class AssistantController {
         StringWriter stringWriter = new StringWriter();
         JsonGenerator jsonGenerator = jacksonFactory.createJsonGenerator(stringWriter);
 
-        Optional<IntentEntity> intent = intentService.findByName(IntentName.valueOf(parse.getQueryResult()
+        String googleIntentDisplayName = parse.getQueryResult()
                 .getIntent()
-                .getDisplayName()));
+                .getDisplayName();
+
+        String splitIntent = String.join("_", googleIntentDisplayName.split("(?=[A-Z])"));
+
+        Optional<IntentEntity> intent = intentService.findByName(IntentName.valueOf(splitIntent.toUpperCase()));
 
         IntentEntity intentEntity = intent.get();
+
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setUser(userService.findByEmail("google_home_mini@abv.bg").get());
+        notificationEntity.setIntent(intentEntity);
+        notificationEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        notificationService.save(notificationEntity);
 
         GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
         sendNotifications(intentEntity);
 
         response.setFulfillmentText(String.format(
-                "Вашата заявка е приета. %s ще дойде скоро",
-                intentEntity.getRole().getName()));
+                "Your request has been acknowledged. %s will come soon",
+                intentEntity.getRole().getName().getRoleEn()));
         jsonGenerator.serialize(response);
         jsonGenerator.flush();
 
@@ -121,7 +131,7 @@ public class AssistantController {
                 List<RoleName> roleNames = userEntity.getRoles().stream()
                         .map(RoleEntity::getName).collect(Collectors.toList());
                 if (EnumSet.copyOf(roleNames).contains(intentEntity.getRole().getName())) {
-                    // send push notification to all such people
+                    // send push notification to all "such" people
                     log.info("Sending intent {} to {}",
                             intentEntity.getMessage(),
                             userEntity.getEmail());
